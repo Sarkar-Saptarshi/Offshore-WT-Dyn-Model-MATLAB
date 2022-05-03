@@ -1,0 +1,26 @@
+function [w_r, zd] = OptTMDIParams(mu, b, phi)
+    zd = 0.15;
+    for iter = 1:10
+        A = 3*mu^2*(mu^2 + 2*mu*phi^2*b - 4*mu*phi*b + 2*mu*b + 2*mu + phi^4*b^2 - 4*phi^3*b^2 ...
+            + 6*phi^2*b^2 + 2*phi^2*b - 4*phi*b^2 - 4*phi*b + b^2 + 2*b + 1);
+        B = mu*(4*mu^2*zd^2 - mu^2 + 4*mu*phi^2*zd^2*b - 2*mu*phi^2*b - 8*mu*phi*zd^2*b + 2*mu*phi*b ...
+            + 4*mu*zd^2*b + 4*mu*zd^2 - 2*mu*b - 2*mu - phi^2*b^2 + 2*phi*b^2 - b^2 - 2*b);
+        C = -(mu^2 + 2*mu*b + b^2);
+
+        w_r = sqrt((-B + sqrt(B^2 - 4*A*C))/2/A);
+
+        LastZd = zd;
+    %     zd = 1/(2*mu*wr*sqrt(mu + 1)) * sqrt(mu^4*wr^4 + 2*mu^3*wr^4 - mu^3*wr^2 - 2*mu^2*beta*wr^2 + mu^2*wr^4 - 2*mu^2*wr^2 + mu^2 - 2*mu*beta*wr^2 + 2*mu*beta + beta^2);
+        zd = sqrt((mu^4*w_r^4 + 2*mu^3*phi^2*b*w_r^4 - 4*mu^3*phi*b*w_r^4 + 2*mu^3*b*w_r^4 ...
+            + 2*mu^3*w_r^4 - mu^3*w_r^2 + mu^2*phi^4*b^2*w_r^4 - 4*mu^2*phi^3*b^2*w_r^4 ...
+            + 6*mu^2*phi^2*b^2*w_r^4 + 2*mu^2*phi^2*b*w_r^4 - 2*mu^2*phi^2*b*w_r^2 ...
+            - 4*mu^2*phi*b^2*w_r^4 - 4*mu^2*phi*b*w_r^4 + 2*mu^2*phi*b*w_r^2 + ...
+            mu^2*b^2*w_r^4 + 2*mu^2*b*w_r^4 - 2*mu^2*b*w_r^2 + mu^2*w_r^4 - 2*mu^2*w_r^2 ...
+            + mu^2 - mu*phi^2*b^2*w_r^2 + 2*mu*phi*b^2*w_r^2 - mu*b^2*w_r^2 - 2*mu*b*w_r^2 ...
+            + 2*mu*b + b^2)/(mu + phi^2*b - 2*phi*b + b + 1))/(2*mu*w_r);
+
+        if abs(LastZd - zd) < 1e-5
+            break
+        end
+    end
+end
